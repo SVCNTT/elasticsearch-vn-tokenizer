@@ -12,4 +12,37 @@ Build from :
 							 
 Docker run :
 
-	docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" toanmai/elasticsearch:6.8.0
+	docker run -p 9200:9200 -p 9300:9300 toanmai/elasticsearch:6.8.0
+
+Elasticsearch index :
+
+	POST _/{{$index name}}
+	{
+	  "settings": {
+	    "index": {
+	        "number_of_shards" : 1,
+	        "number_of_replicas" : 1,        
+	    	"analysis": {
+	        	"analyzer": {
+	        		"ghn_clienthubs_analyzer": {
+	            		"tokenizer": "vi_tokenizer",
+	            		"char_filter":  [ "html_strip" ],
+		            	"filter": [
+		            		"icu_folding"
+		            	]
+	        		}
+	        	}
+	    	}
+	    }
+	  },
+	    "mappings": {
+	        "clienthubs_type": {
+	            "properties" : {
+	                "Address" : {
+	                    "type" : "text",
+	                    "analyzer" : "ghn_clienthubs_analyzer"
+	                }
+	            }            
+	        }
+	    }
+	}
